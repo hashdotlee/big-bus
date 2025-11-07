@@ -1,0 +1,17 @@
+{
+  "name": "@big-bus/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types and interfaces for Big Bus",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "keywords": ["big-bus", "types", "typescript"],
+  "author": "Big Bus Team",
+  "license": "MIT"
+}
