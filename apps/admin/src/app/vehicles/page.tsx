@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '@big-bus/api-client';
 import AdminLayout from '@/components/layout/AdminLayout';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
@@ -10,17 +10,26 @@ import Badge from '@/components/ui/Badge';
 import Table, { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import Select from '@/components/ui/Select';
 import Input from '@/components/ui/Input';
+import VehicleForm, { VehicleFormData } from '@/components/vehicles/VehicleForm';
+import { useToast } from '@/components/ui/ToastContainer';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
   MapPinIcon,
   WrenchScrewdriverIcon,
+  PencilIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
 
 export default function VehiclesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<any>(null);
+
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const { data: vehicles, isLoading } = useQuery(['vehicles', statusFilter, typeFilter], () => {
     const params: any = {};
@@ -28,6 +37,30 @@ export default function VehiclesPage() {
     if (typeFilter !== 'all') params.type = typeFilter;
     return api.vehicles.getVehicles(params);
   });
+
+  // Note: Backend doesn't have createVehicle API yet, but we prepare the mutation
+  const createVehicleMutation = useMutation(
+    (data: VehicleFormData) => {
+      // API not implemented yet - placeholder
+      return Promise.resolve({ id: 'new-id', ...data });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('vehicles');
+        setIsFormOpen(false);
+        showToast({
+          type: 'success',
+          message: 'Vehicle created successfully!',
+        });
+      },
+      onError: (error: any) => {
+        showToast({
+          type: 'error',
+          message: error.message || 'Failed to create vehicle',
+        });
+      },
+    }
+  );
 
   const filteredVehicles = vehicles?.filter((vehicle: any) => {
     if (!searchQuery) return true;
@@ -38,6 +71,34 @@ export default function VehiclesPage() {
       vehicle.model?.toLowerCase().includes(search)
     );
   });
+
+  const handleAddVehicle = () => {
+    setEditingVehicle(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEditVehicle = (vehicle: any) => {
+    setEditingVehicle(vehicle);
+    setIsFormOpen(true);
+  };
+
+  const handleSubmit = (data: VehicleFormData) => {
+    if (editingVehicle) {
+      // Update mutation (not implemented in backend yet)
+      showToast({
+        type: 'info',
+        message: 'Update API not yet implemented',
+      });
+    } else {
+      createVehicleMutation.mutate(data);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setStatusFilter('all');
+    setTypeFilter('all');
+    setSearchQuery('');
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'success' | 'warning' | 'default'> = {
@@ -68,7 +129,7 @@ export default function VehiclesPage() {
               Manage your fleet of vehicles, maintenance schedules, and real-time tracking.
             </p>
           </div>
-          <Button>
+          <Button onClick={handleAddVehicle}>
             <PlusIcon className="mr-2 h-5 w-5" />
             Add Vehicle
           </Button>
@@ -162,7 +223,7 @@ export default function VehiclesPage() {
                   { value: 'vip', label: 'VIP' },
                 ]}
               />
-              <Button variant="secondary" fullWidth>
+              <Button variant="secondary" fullWidth onClick={handleClearFilters}>
                 Clear Filters
               </Button>
             </div>
@@ -206,7 +267,14 @@ export default function VehiclesPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => handleEditVehicle(vehicle)}
                             className="text-blue-600 hover:text-blue-800"
+                            title="Edit vehicle"
+                          >
+                            <PencilIcon className="h-5 w-5" />
+                          </button>
+                          <button
+                            className="text-green-600 hover:text-green-800"
                             title="View location"
                           >
                             <MapPinIcon className="h-5 w-5" />
@@ -234,6 +302,15 @@ export default function VehiclesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Vehicle Form Modal */}
+      <VehicleForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSubmit={handleSubmit}
+        initialData={editingVehicle}
+        isLoading={createVehicleMutation.isLoading}
+      />
     </AdminLayout>
   );
 }
