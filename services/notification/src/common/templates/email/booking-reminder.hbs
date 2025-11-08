@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhắc nhở chuyến đi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #FF9800;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .reminder-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .content {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .trip-details {
+            background-color: white;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border-left: 4px solid #FF9800;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .highlight {
+            background-color: #FFF3CD;
+            padding: 15px;
+            border-left: 4px solid #FF9800;
+            margin: 15px 0;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 0 0 5px 5px;
+            font-size: 12px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #FF9800;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="reminder-icon">⏰</div>
+        <h1>Nhắc nhở chuyến đi</h1>
+    </div>
+
+    <div class="content">
+        <p>Xin chào <strong>{{customerName}}</strong>,</p>
+
+        <div class="highlight">
+            <p style="margin: 0; font-size: 18px; text-align: center;">
+                <strong>Chuyến đi của bạn sẽ khởi hành trong {{hoursUntilDeparture}} giờ nữa!</strong>
+            </p>
+        </div>
+
+        <div class="trip-details">
+            <h3>Thông tin chuyến đi</h3>
+
+            <div class="detail-row">
+                <span class="detail-label">Mã đặt vé:</span>
+                <span>{{bookingCode}}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Tuyến đường:</span>
+                <span>{{route}}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Thời gian khởi hành:</span>
+                <span><strong>{{departureDate}} - {{departureTime}}</strong></span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Điểm đón:</span>
+                <span>{{pickupLocation}}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Số ghế:</span>
+                <span>{{seatNumbers}}</span>
+            </div>
+        </div>
+
+        <p><strong>Lưu ý quan trọng:</strong></p>
+        <ul>
+            <li>Vui lòng có mặt tại điểm đón trước giờ khởi hành ít nhất 15 phút</li>
+            <li>Mang theo CMND/CCCD và vé điện tử</li>
+            <li>Chuẩn bị sẵn mã QR để check-in nhanh chóng</li>
+        </ul>
+
+        <div style="text-align: center;">
+            <a href="{{bookingUrl}}" class="button">Xem chi tiết vé</a>
+        </div>
+
+        <p style="text-align: center;">Chúc bạn có một chuyến đi an toàn và vui vẻ! 🚌</p>
+    </div>
+
+    <div class="footer">
+        <p>© 2024 Big Bus. All rights reserved.</p>
+        <p>Email: support@bigbus.com | Hotline: 1900-xxxx</p>
+    </div>
+</body>
+</html>
