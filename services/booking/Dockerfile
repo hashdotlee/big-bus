@@ -12,6 +12,9 @@ WORKDIR /app
 COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
 
+# Copy shared packages
+COPY packages ./packages
+
 # Copy service package.json
 COPY services/booking/package*.json ./services/booking/
 COPY services/booking/tsconfig*.json ./services/booking/
@@ -43,6 +46,9 @@ WORKDIR /app
 COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
 
+# Copy shared packages
+COPY packages ./packages
+
 # Copy service files
 COPY services/booking ./services/booking
 
@@ -66,6 +72,9 @@ ENV NODE_ENV=production
 # Copy workspace configuration
 COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
+
+# Copy shared packages
+COPY packages ./packages
 
 # Copy service package.json
 COPY services/booking/package*.json ./services/booking/
