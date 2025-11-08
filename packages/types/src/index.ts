@@ -7,8 +7,8 @@ export * from './auth';
 // Booking types
 export * from './booking';
 
-// Vehicle types (to be implemented)
-// export * from './vehicle';
+// Vehicle types
+export * from './vehicle';
 
 // Payment types (to be implemented)
 // export * from './payment';
