@@ -21,7 +21,16 @@ export class BookingsService {
   ) {}
 
   async create(userId: string, createBookingDto: CreateBookingDto): Promise<Booking> {
-    const { scheduleId, passengers, seatNumbers, pickupStationId, dropoffStationId, promotionCode, specialRequests, bookingType } = createBookingDto;
+    const {
+      scheduleId,
+      passengers,
+      seatNumbers,
+      pickupStationId,
+      dropoffStationId,
+      promotionCode,
+      specialRequests,
+      bookingType,
+    } = createBookingDto;
 
     // Validate schedule exists and has enough seats
     const schedule = await this.schedulesService.findOne(scheduleId);
@@ -92,7 +101,15 @@ export class BookingsService {
 
     return await this.bookingsRepository.find({
       where,
-      relations: ['schedule', 'schedule.route', 'schedule.route.originStation', 'schedule.route.destinationStation', 'passengers', 'pickupStation', 'dropoffStation'],
+      relations: [
+        'schedule',
+        'schedule.route',
+        'schedule.route.originStation',
+        'schedule.route.destinationStation',
+        'passengers',
+        'pickupStation',
+        'dropoffStation',
+      ],
       order: { createdAt: 'DESC' },
     });
   }
@@ -100,7 +117,15 @@ export class BookingsService {
   async findOne(id: string): Promise<Booking> {
     const booking = await this.bookingsRepository.findOne({
       where: { id },
-      relations: ['schedule', 'schedule.route', 'schedule.route.originStation', 'schedule.route.destinationStation', 'passengers', 'pickupStation', 'dropoffStation'],
+      relations: [
+        'schedule',
+        'schedule.route',
+        'schedule.route.originStation',
+        'schedule.route.destinationStation',
+        'passengers',
+        'pickupStation',
+        'dropoffStation',
+      ],
     });
 
     if (!booking) {
@@ -113,7 +138,15 @@ export class BookingsService {
   async findByBookingCode(bookingCode: string): Promise<Booking> {
     const booking = await this.bookingsRepository.findOne({
       where: { bookingCode },
-      relations: ['schedule', 'schedule.route', 'schedule.route.originStation', 'schedule.route.destinationStation', 'passengers', 'pickupStation', 'dropoffStation'],
+      relations: [
+        'schedule',
+        'schedule.route',
+        'schedule.route.originStation',
+        'schedule.route.destinationStation',
+        'passengers',
+        'pickupStation',
+        'dropoffStation',
+      ],
     });
 
     if (!booking) {

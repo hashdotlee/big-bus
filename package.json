@@ -5,11 +5,6 @@
   "description": "Bus Booking System - Comprehensive microservices platform",
   "author": "Big Bus Team",
   "license": "MIT",
-  "workspaces": [
-    "services/*",
-    "packages/*",
-    "apps/*"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
@@ -42,6 +37,5 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
-  },
-  "packageManager": "npm@10.2.4"
+  }
 }
