@@ -8,17 +8,22 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Copy service package.json
+COPY services/vehicle/package*.json ./services/vehicle/
+COPY services/vehicle/tsconfig*.json ./services/vehicle/
+COPY services/vehicle/nest-cli.json ./services/vehicle/
+
+# Install dependencies (without frozen-lockfile for development flexibility)
+RUN pnpm install --filter @big-bus/vehicle-service...
 
 # Copy source code
-COPY src ./src
+COPY services/vehicle/src ./services/vehicle/src
+
+WORKDIR /app/services/vehicle
 
 # Expose port
 EXPOSE 3003
@@ -34,14 +39,17 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-RUN pnpm install --frozen-lockfile
+# Copy service files
+COPY services/vehicle ./services/vehicle
 
-COPY src ./src
+# Install dependencies
+RUN pnpm install --filter @big-bus/vehicle-service...
+
+WORKDIR /app/services/vehicle
 
 RUN pnpm run build
 
@@ -55,18 +63,26 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
 
+# Copy service package.json
+COPY services/vehicle/package*.json ./services/vehicle/
+
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod && pnpm store prune
+RUN pnpm install --filter @big-bus/vehicle-service... --prod
 
 # Copy built application from build stage
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/services/vehicle/dist ./services/vehicle/dist
+
+WORKDIR /app/services/vehicle
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nestjs -u 1001
+
+RUN chown -R nestjs:nodejs /app
 
 USER nestjs
 

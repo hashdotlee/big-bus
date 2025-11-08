@@ -8,17 +8,22 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Copy service package.json
+COPY services/analytics/package*.json ./services/analytics/
+COPY services/analytics/tsconfig*.json ./services/analytics/
+COPY services/analytics/nest-cli.json ./services/analytics/
+
+# Install dependencies (without frozen-lockfile for development flexibility)
+RUN pnpm install --filter @big-bus/analytics-service...
 
 # Copy source code
-COPY src ./src
+COPY services/analytics/src ./services/analytics/src
+
+WORKDIR /app/services/analytics
 
 # Expose port
 EXPOSE 3006
@@ -34,14 +39,17 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-RUN pnpm install --frozen-lockfile
+# Copy service files
+COPY services/analytics ./services/analytics
 
-COPY src ./src
+# Install dependencies
+RUN pnpm install --filter @big-bus/analytics-service...
+
+WORKDIR /app/services/analytics
 
 RUN pnpm run build
 
@@ -55,18 +63,26 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
 
+# Copy service package.json
+COPY services/analytics/package*.json ./services/analytics/
+
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod && pnpm store prune
+RUN pnpm install --filter @big-bus/analytics-service... --prod
 
 # Copy built application from build stage
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/services/analytics/dist ./services/analytics/dist
+
+WORKDIR /app/services/analytics
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nestjs -u 1001
+
+RUN chown -R nestjs:nodejs /app
 
 USER nestjs
 
