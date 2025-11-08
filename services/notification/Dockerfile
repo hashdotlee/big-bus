@@ -3,15 +3,19 @@
 # Development stage
 FROM node:18-alpine AS development
 
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
 # Install dependencies
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY src ./src
@@ -20,34 +24,42 @@ COPY src ./src
 EXPOSE 3005
 
 # Development command will be provided by docker-compose
-CMD ["npm", "run", "start:dev"]
+CMD ["pnpm", "run", "start:dev"]
 
 # Build stage
 FROM node:18-alpine AS build
 
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
 WORKDIR /app
 
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 COPY src ./src
 
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:18-alpine AS production
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
 
 # Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN pnpm install --frozen-lockfile --prod && pnpm store prune
 
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
