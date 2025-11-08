@@ -90,7 +90,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Booking Service
   booking-service:
@@ -120,7 +120,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Vehicle Service
   vehicle-service:
@@ -147,7 +147,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Payment Service
   payment-service:
@@ -177,7 +177,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Notification Service
   notification-service:
@@ -204,7 +204,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # Analytics Service
   analytics-service:
@@ -231,7 +231,7 @@ services:
         condition: service_healthy
     networks:
       - bigbus-network
-    command: npm run start:dev
+    command: pnpm run start:dev
 
   # API Gateway (Nginx)
   nginx:
