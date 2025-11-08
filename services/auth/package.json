@@ -42,8 +42,8 @@
     "class-transformer": "^0.5.1",
     "reflect-metadata": "^0.2.1",
     "rxjs": "^7.8.1",
-    "@big-bus/common": "workspace:*",
-    "@big-bus/types": "workspace:*"
+    "@big-bus/common": "*",
+    "@big-bus/types": "*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.2.1",

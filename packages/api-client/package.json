@@ -1,0 +1,28 @@
+{
+  "name": "@big-bus/api-client",
+  "version": "1.0.0",
+  "description": "API client for Big Bus services",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "api",
+    "client",
+    "http"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@big-bus/types": "*",
+    "axios": "^1.6.2",
+    "axios-retry": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.3.3"
+  }
+}
