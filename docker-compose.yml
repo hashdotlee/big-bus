@@ -66,8 +66,8 @@ services:
   # Auth Service
   auth-service:
     build:
-      context: ./services/auth
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/auth/Dockerfile
       target: development
     container_name: bigbus-auth
     restart: unless-stopped
@@ -95,8 +95,8 @@ services:
   # Booking Service
   booking-service:
     build:
-      context: ./services/booking
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/booking/Dockerfile
       target: development
     container_name: bigbus-booking
     restart: unless-stopped
@@ -125,8 +125,8 @@ services:
   # Vehicle Service
   vehicle-service:
     build:
-      context: ./services/vehicle
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/vehicle/Dockerfile
       target: development
     container_name: bigbus-vehicle
     restart: unless-stopped
@@ -152,8 +152,8 @@ services:
   # Payment Service
   payment-service:
     build:
-      context: ./services/payment
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/payment/Dockerfile
       target: development
     container_name: bigbus-payment
     restart: unless-stopped
@@ -182,8 +182,8 @@ services:
   # Notification Service
   notification-service:
     build:
-      context: ./services/notification
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/notification/Dockerfile
       target: development
     container_name: bigbus-notification
     restart: unless-stopped
@@ -209,8 +209,8 @@ services:
   # Analytics Service
   analytics-service:
     build:
-      context: ./services/analytics
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/analytics/Dockerfile
       target: development
     container_name: bigbus-analytics
     restart: unless-stopped
