@@ -1,39 +1,63 @@
-FROM node:20-alpine AS base
+# Multi-stage build for optimized production image
 
-# Install pnpm
-RUN npm install -g pnpm
+# Development stage
+FROM node:18-alpine AS development
 
-# Build stage
-FROM base AS builder
 WORKDIR /app
 
-# Copy workspace files
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY packages ./packages
-COPY services/analytics ./services/analytics
+# Copy package files
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN npm ci
 
-# Build the service
-RUN pnpm --filter @big-bus/analytics-service build
+# Copy source code
+COPY src ./src
 
-# Production stage
-FROM base AS runner
+# Expose port
+EXPOSE 3006
+
+# Development command will be provided by docker-compose
+CMD ["npm", "run", "start:dev"]
+
+# Build stage
+FROM node:18-alpine AS build
+
 WORKDIR /app
 
-# Install production dependencies only
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY packages ./packages
-COPY services/analytics/package.json ./services/analytics/
-RUN pnpm install --filter @big-bus/analytics-service --prod --frozen-lockfile
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
-# Copy built files
-COPY --from=builder /app/services/analytics/dist ./services/analytics/dist
-COPY --from=builder /app/packages ./packages
+RUN npm ci
 
-WORKDIR /app/services/analytics
+COPY src ./src
+
+RUN npm run build
+
+# Production stage
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy built application from build stage
+COPY --from=build /app/dist ./dist
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
+
+USER nestjs
 
 EXPOSE 3006
 
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/main"]
