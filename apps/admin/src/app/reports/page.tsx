@@ -8,6 +8,13 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Select from '@/components/ui/Select';
+import { useToast } from '@/components/ui/ToastContainer';
+import {
+  exportToCSV,
+  formatRevenueDataForExport,
+  formatRouteAnalyticsForExport,
+  formatCustomerAnalyticsForExport,
+} from '@/utils/exportData';
 import {
   LineChart,
   Line,
@@ -25,6 +32,7 @@ import { ArrowDownTrayIcon, CalendarIcon } from '@heroicons/react/24/outline';
 export default function ReportsPage() {
   const [timeRange, setTimeRange] = useState('7days');
   const [reportType, setReportType] = useState('revenue');
+  const { showToast } = useToast();
 
   const today = new Date();
   const startDate = subDays(today, timeRange === '7days' ? 7 : timeRange === '30days' ? 30 : 90);
@@ -63,6 +71,55 @@ export default function ReportsPage() {
     bookings: route.bookingCount,
   }));
 
+  const handleExportReport = () => {
+    try {
+      const timestamp = format(new Date(), 'yyyy-MM-dd_HH-mm');
+
+      switch (reportType) {
+        case 'revenue':
+          if (revenueData) {
+            const data = formatRevenueDataForExport(revenueData);
+            exportToCSV(data, `revenue-report_${timestamp}`);
+            showToast({
+              type: 'success',
+              message: 'Revenue report exported successfully!',
+            });
+          }
+          break;
+        case 'routes':
+          if (routeAnalytics) {
+            const data = formatRouteAnalyticsForExport(routeAnalytics);
+            exportToCSV(data, `route-analytics_${timestamp}`);
+            showToast({
+              type: 'success',
+              message: 'Route analytics exported successfully!',
+            });
+          }
+          break;
+        case 'customers':
+          if (customerAnalytics) {
+            const data = formatCustomerAnalyticsForExport(customerAnalytics);
+            exportToCSV(data, `customer-analytics_${timestamp}`);
+            showToast({
+              type: 'success',
+              message: 'Customer analytics exported successfully!',
+            });
+          }
+          break;
+        default:
+          showToast({
+            type: 'info',
+            message: 'Please select a report type to export',
+          });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        message: 'Failed to export report',
+      });
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -74,7 +131,7 @@ export default function ReportsPage() {
               View detailed analytics, generate reports, and track performance metrics.
             </p>
           </div>
-          <Button>
+          <Button onClick={handleExportReport}>
             <ArrowDownTrayIcon className="mr-2 h-5 w-5" />
             Export Report
           </Button>

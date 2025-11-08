@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { api } from '@big-bus/api-client';
 import { format } from 'date-fns';
 import AdminLayout from '@/components/layout/AdminLayout';
@@ -11,6 +11,8 @@ import Badge from '@/components/ui/Badge';
 import Table, { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import Select from '@/components/ui/Select';
 import Input from '@/components/ui/Input';
+import BookingDetailModal from '@/components/bookings/BookingDetailModal';
+import { useToast } from '@/components/ui/ToastContainer';
 import {
   MagnifyingGlassIcon,
   EyeIcon,
@@ -21,12 +23,59 @@ import {
 export default function BookingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const { data: bookings, isLoading } = useQuery(['bookings', statusFilter], () => {
     const params: any = {};
     if (statusFilter !== 'all') params.status = statusFilter;
     return api.booking.getMyBookings();
   });
+
+  // Confirm booking mutation
+  const confirmMutation = useMutation(
+    (bookingId: string) => api.booking.confirmBooking(bookingId),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('bookings');
+        setIsDetailModalOpen(false);
+        showToast({
+          type: 'success',
+          message: 'Booking confirmed successfully!',
+        });
+      },
+      onError: (error: any) => {
+        showToast({
+          type: 'error',
+          message: error.message || 'Failed to confirm booking',
+        });
+      },
+    }
+  );
+
+  // Cancel booking mutation
+  const cancelMutation = useMutation(
+    (bookingId: string) => api.booking.cancelBooking(bookingId, 'Cancelled by admin'),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('bookings');
+        setIsDetailModalOpen(false);
+        showToast({
+          type: 'success',
+          message: 'Booking cancelled successfully!',
+        });
+      },
+      onError: (error: any) => {
+        showToast({
+          type: 'error',
+          message: error.message || 'Failed to cancel booking',
+        });
+      },
+    }
+  );
 
   const filteredBookings = bookings?.filter((booking: any) => {
     if (!searchQuery) return true;
@@ -37,6 +86,30 @@ export default function BookingsPage() {
       booking.passengerInfo?.email?.toLowerCase().includes(search)
     );
   });
+
+  const handleViewDetails = (booking: any) => {
+    setSelectedBooking(booking);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleQuickConfirm = (bookingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to confirm this booking?')) {
+      confirmMutation.mutate(bookingId);
+    }
+  };
+
+  const handleQuickCancel = (bookingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to cancel this booking?')) {
+      cancelMutation.mutate(bookingId);
+    }
+  };
+
+  const handleClearFilters = () => {
+    setStatusFilter('all');
+    setSearchQuery('');
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'warning' | 'success' | 'danger' | 'default'> = {
@@ -129,7 +202,7 @@ export default function BookingsPage() {
                   { value: 'completed', label: 'Completed' },
                 ]}
               />
-              <Button variant="secondary" fullWidth>
+              <Button variant="secondary" fullWidth onClick={handleClearFilters}>
                 Clear Filters
               </Button>
             </div>
@@ -194,6 +267,7 @@ export default function BookingsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <button
+                            onClick={() => handleViewDetails(booking)}
                             className="text-blue-600 hover:text-blue-800"
                             title="View details"
                           >
@@ -202,14 +276,18 @@ export default function BookingsPage() {
                           {booking.status === 'pending' && (
                             <>
                               <button
+                                onClick={(e) => handleQuickConfirm(booking.id, e)}
                                 className="text-green-600 hover:text-green-800"
                                 title="Confirm booking"
+                                disabled={confirmMutation.isLoading}
                               >
                                 <CheckCircleIcon className="h-5 w-5" />
                               </button>
                               <button
+                                onClick={(e) => handleQuickCancel(booking.id, e)}
                                 className="text-red-600 hover:text-red-800"
                                 title="Cancel booking"
+                                disabled={cancelMutation.isLoading}
                               >
                                 <XCircleIcon className="h-5 w-5" />
                               </button>
@@ -232,6 +310,16 @@ export default function BookingsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Booking Detail Modal */}
+      <BookingDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        booking={selectedBooking}
+        onConfirm={(bookingId) => confirmMutation.mutate(bookingId)}
+        onCancel={(bookingId) => cancelMutation.mutate(bookingId)}
+        isLoading={confirmMutation.isLoading || cancelMutation.isLoading}
+      />
     </AdminLayout>
   );
 }
