@@ -16,5 +16,5 @@ export * from './booking';
 // Notification types (to be implemented)
 // export * from './notification';
 
-// Analytics types (to be implemented)
-// export * from './analytics';
+// Analytics types
+export * from './analytics';
