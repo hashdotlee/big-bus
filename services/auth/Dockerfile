@@ -8,17 +8,22 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Copy service package.json
+COPY services/auth/package*.json ./services/auth/
+COPY services/auth/tsconfig*.json ./services/auth/
+COPY services/auth/nest-cli.json ./services/auth/
+
+# Install dependencies (without frozen-lockfile for development flexibility)
+RUN pnpm install --filter @big-bus/auth-service...
 
 # Copy source code
-COPY src ./src
+COPY services/auth/src ./services/auth/src
+
+WORKDIR /app/services/auth
 
 # Expose port
 EXPOSE 3001
@@ -34,14 +39,17 @@ RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
-COPY tsconfig*.json ./
-COPY nest-cli.json ./
 
-RUN pnpm install --frozen-lockfile
+# Copy service files
+COPY services/auth ./services/auth
 
-COPY src ./src
+# Install dependencies
+RUN pnpm install --filter @big-bus/auth-service...
+
+WORKDIR /app/services/auth
 
 RUN pnpm run build
 
@@ -55,18 +63,26 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY package*.json ./
+# Copy workspace configuration
+COPY pnpm-workspace.yaml package.json ./
 COPY pnpm-lock.yaml* ./
 
+# Copy service package.json
+COPY services/auth/package*.json ./services/auth/
+
 # Install only production dependencies
-RUN pnpm install --frozen-lockfile --prod && pnpm store prune
+RUN pnpm install --filter @big-bus/auth-service... --prod
 
 # Copy built application from build stage
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/services/auth/dist ./services/auth/dist
+
+WORKDIR /app/services/auth
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nestjs -u 1001
+
+RUN chown -R nestjs:nodejs /app
 
 USER nestjs
 
