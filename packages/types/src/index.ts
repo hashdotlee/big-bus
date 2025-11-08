@@ -10,11 +10,11 @@ export * from './booking';
 // Vehicle types
 export * from './vehicle';
 
-// Payment types (to be implemented)
-// export * from './payment';
+// Payment types
+export * from './payment';
 
-// Notification types (to be implemented)
-// export * from './notification';
+// Notification types
+export * from './notification';
 
 // Analytics types
 export * from './analytics';
