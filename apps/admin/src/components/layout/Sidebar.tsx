@@ -8,6 +8,7 @@ import {
   TicketIcon,
   MapIcon,
   ChartBarIcon,
+  BanknotesIcon,
   Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 
@@ -16,6 +17,7 @@ const navigation = [
   { name: 'Vehicles', href: '/vehicles', icon: TruckIcon },
   { name: 'Bookings', href: '/bookings', icon: TicketIcon },
   { name: 'Routes', href: '/routes', icon: MapIcon },
+  { name: 'Finance', href: '/finance', icon: BanknotesIcon },
   { name: 'Reports', href: '/reports', icon: ChartBarIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
