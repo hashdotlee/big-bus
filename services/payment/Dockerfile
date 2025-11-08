@@ -1,54 +1,75 @@
+# Multi-stage build for optimized production image
+
 # Development stage
 FROM node:18-alpine AS development
+
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
 # Install dependencies
-RUN npm install
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
-COPY . .
+COPY src ./src
 
 # Expose port
 EXPOSE 3004
 
-# Start in development mode
-CMD ["npm", "run", "start:dev"]
+# Development command will be provided by docker-compose
+CMD ["pnpm", "run", "start:dev"]
 
 # Build stage
 FROM node:18-alpine AS build
 
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+COPY pnpm-lock.yaml* ./
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+RUN pnpm install --frozen-lockfile
 
-# Copy source code
-COPY . .
+COPY src ./src
 
-# Build the application
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:18-alpine AS production
 
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@8.15.0 --activate
+
 WORKDIR /app
 
-# Copy package files and install production dependencies
+ENV NODE_ENV=production
+
 COPY package*.json ./
-RUN npm ci --only=production
+COPY pnpm-lock.yaml* ./
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod && pnpm store prune
 
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
 
-# Expose port
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
+
+USER nestjs
+
 EXPOSE 3004
 
-# Start in production mode
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]
