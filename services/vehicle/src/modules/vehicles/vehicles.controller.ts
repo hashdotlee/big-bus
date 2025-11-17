@@ -1,3 +1,4 @@
+import { VehicleType, VehicleStatus } from '@big-bus/types';
 import {
   Controller,
   Get,
@@ -17,9 +18,9 @@ import {
   ApiQuery,
   ApiParam,
 } from '@nestjs/swagger';
-import { VehiclesService } from './vehicles.service';
+
 import { CreateVehicleDto, UpdateVehicleDto, RecordMaintenanceDto } from './dto';
-import { VehicleType, VehicleStatus } from '@big-bus/types';
+import { VehiclesService } from './vehicles.service';
 
 @ApiTags('vehicles')
 @Controller('vehicles')

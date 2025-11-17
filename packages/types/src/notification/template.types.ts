@@ -33,7 +33,7 @@ export interface UpdateTemplateDto {
 
 export interface RenderTemplateDto {
   templateId: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface RenderedTemplate {

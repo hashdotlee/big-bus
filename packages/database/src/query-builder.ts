@@ -1,10 +1,10 @@
-import { SelectQueryBuilder, Brackets } from 'typeorm';
+import { SelectQueryBuilder, Brackets, ObjectLiteral } from 'typeorm';
 
 export interface FilterOptions {
   field: string;
   operator: 'eq' | 'ne' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'in' | 'between' | 'isNull' | 'isNotNull';
-  value?: any;
-  values?: any[];
+  value?: unknown;
+  values?: unknown[];
 }
 
 export interface SortOptions {
@@ -16,7 +16,7 @@ export class QueryBuilderHelper {
   /**
    * Apply filters to query builder
    */
-  static applyFilters<T>(
+  static applyFilters<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     filters: FilterOptions[]
   ): SelectQueryBuilder<T> {
@@ -76,7 +76,7 @@ export class QueryBuilderHelper {
   /**
    * Apply sorting to query builder
    */
-  static applySorting<T>(
+  static applySorting<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     sorts: SortOptions[]
   ): SelectQueryBuilder<T> {
@@ -93,7 +93,7 @@ export class QueryBuilderHelper {
   /**
    * Apply pagination to query builder
    */
-  static applyPagination<T>(
+  static applyPagination<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     page: number,
     limit: number
@@ -105,7 +105,7 @@ export class QueryBuilderHelper {
   /**
    * Apply search across multiple fields
    */
-  static applySearch<T>(
+  static applySearch<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     searchTerm: string,
     fields: string[]
@@ -127,7 +127,7 @@ export class QueryBuilderHelper {
   /**
    * Apply date range filter
    */
-  static applyDateRange<T>(
+  static applyDateRange<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     field: string,
     startDate?: Date,
@@ -145,7 +145,7 @@ export class QueryBuilderHelper {
   /**
    * Apply select fields
    */
-  static applySelect<T>(
+  static applySelect<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     fields: string[],
     alias: string
@@ -158,7 +158,7 @@ export class QueryBuilderHelper {
   /**
    * Get paginated result with metadata
    */
-  static async getPaginatedResult<T>(
+  static async getPaginatedResult<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     page: number,
     limit: number
@@ -184,7 +184,7 @@ export class QueryBuilderHelper {
   /**
    * Apply full text search (PostgreSQL specific)
    */
-  static applyFullTextSearch<T>(
+  static applyFullTextSearch<T extends ObjectLiteral>(
     qb: SelectQueryBuilder<T>,
     searchTerm: string,
     fields: string[],

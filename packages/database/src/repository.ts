@@ -1,4 +1,4 @@
-import { Repository, FindOptionsWhere, FindManyOptions, DeepPartial } from 'typeorm';
+import { Repository, FindOptionsWhere, FindManyOptions, DeepPartial, ObjectLiteral } from 'typeorm';
 
 export interface PaginationOptions {
   page: number;
@@ -15,7 +15,7 @@ export interface PaginationResult<T> {
   hasPrev: boolean;
 }
 
-export class BaseRepository<T> {
+export class BaseRepository<T extends ObjectLiteral> {
   constructor(protected repository: Repository<T>) {}
 
   /**
@@ -69,30 +69,31 @@ export class BaseRepository<T> {
   /**
    * Update entity by ID
    */
-  async updateById(id: any, data: DeepPartial<T>): Promise<T> {
-    await this.repository.update(id, data as any);
-    return this.findOneOrFail({ id } as FindOptionsWhere<T>);
+  async updateById(id: string | number, data: DeepPartial<T>): Promise<T> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await this.repository.update(id as unknown as FindOptionsWhere<T>, data as any);
+    return this.findOneOrFail({ id } as unknown as FindOptionsWhere<T>);
   }
 
   /**
    * Soft delete entity by ID
    */
-  async softDeleteById(id: any): Promise<void> {
-    await this.repository.softDelete(id);
+  async softDeleteById(id: string | number): Promise<void> {
+    await this.repository.softDelete(id as unknown as FindOptionsWhere<T>);
   }
 
   /**
    * Hard delete entity by ID
    */
-  async deleteById(id: any): Promise<void> {
-    await this.repository.delete(id);
+  async deleteById(id: string | number): Promise<void> {
+    await this.repository.delete(id as unknown as FindOptionsWhere<T>);
   }
 
   /**
    * Restore soft-deleted entity
    */
-  async restoreById(id: any): Promise<void> {
-    await this.repository.restore(id);
+  async restoreById(id: string | number): Promise<void> {
+    await this.repository.restore(id as unknown as FindOptionsWhere<T>);
   }
 
   /**
@@ -122,6 +123,7 @@ export class BaseRepository<T> {
    * Bulk update entities
    */
   async bulkUpdate(criteria: FindOptionsWhere<T>, data: DeepPartial<T>): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await this.repository.update(criteria, data as any);
   }
 

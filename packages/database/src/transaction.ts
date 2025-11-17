@@ -88,13 +88,14 @@ export class TransactionManager {
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         return await this.executeInTransaction(dataSource, callback);
-      } catch (error: any) {
-        lastError = error;
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
 
         // Check if error is retryable (deadlock or serialization failure)
+        const errorCode = (error as { code?: string }).code;
         const isRetryable =
-          error.code === '40001' || // serialization_failure
-          error.code === '40P01'; // deadlock_detected
+          errorCode === '40001' || // serialization_failure
+          errorCode === '40P01'; // deadlock_detected
 
         if (!isRetryable || attempt === maxRetries - 1) {
           throw error;
@@ -114,7 +115,7 @@ export class TransactionManager {
    */
   static async executeParallelInTransaction<T>(
     dataSource: DataSource,
-    callbacks: TransactionCallback<any>[]
+    callbacks: TransactionCallback<T>[]
   ): Promise<T[]> {
     return this.executeInTransaction(dataSource, async (manager) => {
       return Promise.all(callbacks.map((callback) => callback(manager)));

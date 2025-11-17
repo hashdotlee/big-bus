@@ -11,13 +11,13 @@ import {
  */
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 /**
@@ -33,7 +33,7 @@ export abstract class SoftDeletableEntity extends BaseEntity {
  */
 export abstract class VersionedEntity extends BaseEntity {
   @VersionColumn()
-  version: number;
+  version!: number;
 }
 
 /**
@@ -41,7 +41,7 @@ export abstract class VersionedEntity extends BaseEntity {
  */
 export abstract class FullBaseEntity extends SoftDeletableEntity {
   @VersionColumn()
-  version: number;
+  version!: number;
 }
 
 /**
@@ -49,13 +49,13 @@ export abstract class FullBaseEntity extends SoftDeletableEntity {
  */
 export abstract class BaseEntityWithIntId {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
 
 /**

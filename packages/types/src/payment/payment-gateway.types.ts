@@ -18,7 +18,7 @@ export interface IPaymentGateway {
   name: string;
   description?: string;
   status: PaymentGatewayStatus;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isDefault: boolean;
   supportedCurrencies: string[];
   fee: number;
@@ -32,7 +32,7 @@ export interface CreatePaymentGatewayDto {
   name: string;
   description?: string;
   status?: PaymentGatewayStatus;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   isDefault?: boolean;
   supportedCurrencies?: string[];
   fee?: number;
@@ -43,7 +43,7 @@ export interface UpdatePaymentGatewayDto {
   name?: string;
   description?: string;
   status?: PaymentGatewayStatus;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
   isDefault?: boolean;
   supportedCurrencies?: string[];
   fee?: number;
@@ -57,7 +57,7 @@ export interface PaymentIntentDto {
   bookingId?: string;
   returnUrl: string;
   cancelUrl?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PaymentIntentResponse {
@@ -74,5 +74,5 @@ export interface PaymentCallbackDto {
   amount: number;
   currency: string;
   gatewayTransactionId: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
