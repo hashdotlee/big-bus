@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run linting
+echo "🔍 Running linter..."
+pnpm lint-staged
+
+# Run type checking
+echo "🔍 Running type check..."
+pnpm typecheck
+
+echo "✅ Pre-commit checks passed!"
