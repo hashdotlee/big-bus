@@ -54,6 +54,14 @@ export class BookingsController {
     return this.bookingsService.findByBookingCode(code);
   }
 
+  @Get(':id/qr-code')
+  @ApiOperation({ summary: 'Get QR code for booking' })
+  @ApiResponse({ status: 200, description: 'Return QR code data' })
+  @ApiResponse({ status: 404, description: 'Booking not found' })
+  getQRCode(@Param('id') id: string) {
+    return this.bookingsService.getQRCode(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get booking by ID' })
   @ApiResponse({ status: 200, description: 'Return booking' })

@@ -6,6 +6,7 @@ import { EmailModule } from './modules/email/email.module';
 import { SmsModule } from './modules/sms/sms.module';
 import { PushModule } from './modules/push/push.module';
 import { ZaloModule } from './modules/zalo/zalo.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ZaloModule } from './modules/zalo/zalo.module';
     SmsModule,
     PushModule,
     ZaloModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [],

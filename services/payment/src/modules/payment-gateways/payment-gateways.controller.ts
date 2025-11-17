@@ -23,12 +23,42 @@ export class PaymentGatewaysController {
     private readonly paymentGatewaysService: PaymentGatewaysService,
   ) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Get all payment gateways' })
+  @ApiResponse({ status: 200, description: 'Return all payment gateways' })
+  async getAllGateways() {
+    return {
+      gateways: ['vnpay', 'momo', 'zalopay'],
+    };
+  }
+
+  @Get('active')
+  @ApiOperation({ summary: 'Get active payment gateways' })
+  @ApiResponse({ status: 200, description: 'Return active payment gateways' })
+  async getActiveGateways() {
+    return {
+      gateways: ['vnpay', 'momo', 'zalopay'],
+    };
+  }
+
   @Post('create')
-  @ApiOperation({ summary: 'Create payment URL' })
+  @ApiOperation({ summary: 'Create payment URL (legacy endpoint)' })
   @ApiResponse({ status: 201, description: 'Payment URL created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid gateway or request' })
   @ApiQuery({ name: 'userId', required: true, description: 'User ID (temporary, will be from JWT)' })
   async createPayment(
+    @Query('userId') userId: string,
+    @Body() createPaymentDto: CreatePaymentDto,
+  ) {
+    return this.paymentGatewaysService.createPayment(userId, createPaymentDto);
+  }
+
+  @Post('create-intent')
+  @ApiOperation({ summary: 'Create payment intent' })
+  @ApiResponse({ status: 201, description: 'Payment URL created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid gateway or request' })
+  @ApiQuery({ name: 'userId', required: true, description: 'User ID (temporary, will be from JWT)' })
+  async createPaymentIntent(
     @Query('userId') userId: string,
     @Body() createPaymentDto: CreatePaymentDto,
   ) {

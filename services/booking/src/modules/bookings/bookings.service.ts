@@ -228,4 +228,20 @@ export class BookingsService {
       return '';
     }
   }
+
+  async getQRCode(id: string): Promise<{ qrCode: string; bookingCode: string }> {
+    const booking = await this.findOne(id);
+
+    if (!booking.qrCode) {
+      // Generate QR code if it doesn't exist
+      const qrCode = await this.generateQRCode(booking.bookingCode);
+      booking.qrCode = qrCode;
+      await this.bookingsRepository.save(booking);
+    }
+
+    return {
+      qrCode: booking.qrCode,
+      bookingCode: booking.bookingCode,
+    };
+  }
 }
