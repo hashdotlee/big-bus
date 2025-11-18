@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: big_bus
-      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db,affiliate_db,marketplace_db,ai_support_db
+      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db,affiliate_db,marketplace_db,ai_support_db,personalization_db
     ports:
       - '5432:5432'
     volumes:
@@ -321,6 +321,34 @@ services:
       - bigbus-network
     command: pnpm run dev
 
+  # Personalization Service
+  personalization-service:
+    build:
+      context: .
+      dockerfile: services/personalization/Dockerfile
+      target: development
+    container_name: bigbus-personalization
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3010
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: personalization_db
+    ports:
+      - '3010:3010'
+    volumes:
+      - ./services/personalization:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bigbus-network
+    command: pnpm run dev
+
   # API Gateway (Nginx)
   nginx:
     image: nginx:alpine
@@ -342,6 +370,7 @@ services:
       - affiliate-service
       - marketplace-service
       - ai-support-service
+      - personalization-service
     networks:
       - bigbus-network
 
