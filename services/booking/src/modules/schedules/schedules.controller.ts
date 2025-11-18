@@ -34,6 +34,14 @@ export class SchedulesController {
     return this.schedulesService.search(searchDto);
   }
 
+  @Get(':id/available-seats')
+  @ApiOperation({ summary: 'Get available seats for a schedule' })
+  @ApiResponse({ status: 200, description: 'Return available seats information' })
+  @ApiResponse({ status: 404, description: 'Schedule not found' })
+  getAvailableSeats(@Param('id') id: string) {
+    return this.schedulesService.getAvailableSeats(id);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get schedule by ID' })
   @ApiResponse({ status: 200, description: 'Return schedule' })
