@@ -11,26 +11,26 @@ import { User } from './user.entity';
 @Entity('roles')
 export class Role {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
   description?: string;
 
   @Column({ type: 'json', default: [] })
-  permissions: string[];
+  permissions!: string[];
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive!: boolean;
 
   @ManyToMany(() => User, (user) => user.roles)
-  users: User[];
+  users!: User[];
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }

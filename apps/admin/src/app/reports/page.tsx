@@ -27,10 +27,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  ArrowDownTrayIcon,
-  CalendarIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 export default function ReportsPage() {
   const [timeRange, setTimeRange] = useState('7days');
@@ -45,21 +42,21 @@ export default function ReportsPage() {
       startDate: startDate.toISOString(),
       endDate: today.toISOString(),
       groupBy: 'day',
-    })
+    }),
   );
 
   const { data: routeAnalytics } = useQuery(['routeAnalytics', timeRange], () =>
     api.analytics.getRouteAnalytics({
       startDate: startDate.toISOString(),
       endDate: today.toISOString(),
-    })
+    }),
   );
 
   const { data: customerAnalytics } = useQuery(['customerAnalytics', timeRange], () =>
     api.analytics.getCustomerAnalytics({
       startDate: startDate.toISOString(),
       endDate: today.toISOString(),
-    })
+    }),
   );
 
   const revenueChartData = revenueData?.breakdown?.map((item: any) => ({
@@ -331,9 +328,7 @@ export default function ReportsPage() {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{customer.name || 'Anonymous'}</p>
-                      <p className="text-sm text-gray-500">
-                        {customer.bookingCount} bookings
-                      </p>
+                      <p className="text-sm text-gray-500">{customer.bookingCount} bookings</p>
                     </div>
                   </div>
                   <div className="text-right">
@@ -343,9 +338,7 @@ export default function ReportsPage() {
                     <p className="text-sm text-gray-500">Total spent</p>
                   </div>
                 </div>
-              )) || (
-                <p className="text-center text-gray-500">No customer data available</p>
-              )}
+              )) || <p className="text-center text-gray-500">No customer data available</p>}
             </div>
           </CardContent>
         </Card>

@@ -1,7 +1,7 @@
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { MaintenanceType } from '@big-bus/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { MaintenanceType } from '@big-bus/types';
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class RecordMaintenanceDto {
   @ApiProperty({

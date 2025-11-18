@@ -1,4 +1,4 @@
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource, DeepPartial, EntityManager } from 'typeorm';
 
 export interface SeederInterface {
   name: string;
@@ -155,13 +155,13 @@ export abstract class BaseSeeder implements SeederInterface {
   /**
    * Helper method to create entities in bulk
    */
-  protected async bulkCreate<T>(
+  protected async bulkCreate<T extends object>(
     manager: EntityManager,
     entityClass: new () => T,
-    data: Partial<T>[]
+    data: DeepPartial<T>[]
   ): Promise<T[]> {
     const repository = manager.getRepository(entityClass);
-    const entities = repository.create(data as any);
+    const entities = repository.create(data);
     return repository.save(entities);
   }
 

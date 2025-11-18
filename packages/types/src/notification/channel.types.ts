@@ -29,7 +29,7 @@ export interface PushConfig {
   deviceTokens: string[];
   title: string;
   body: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
   imageUrl?: string;
   sound?: string;
   badge?: number;
@@ -39,7 +39,7 @@ export interface PushConfig {
 export interface ZaloConfig {
   userId: string | string[];
   templateId: string;
-  templateData: Record<string, any>;
+  templateData: Record<string, unknown>;
 }
 
 export interface ZaloOAResponse {

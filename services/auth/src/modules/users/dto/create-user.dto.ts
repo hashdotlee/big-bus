@@ -5,24 +5,24 @@ import { UserRole } from '@big-bus/types';
 export class CreateUserDto {
   @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ example: '+84901234567' })
   @IsPhoneNumber('VN')
-  phone: string;
+  phone!: string;
 
   @ApiProperty({ example: 'SecureP@ssw0rd', minLength: 8 })
   @IsString()
   @MinLength(8)
-  password: string;
+  password!: string;
 
   @ApiProperty({ example: 'Nguyen Van A' })
   @IsString()
-  fullName: string;
+  fullName!: string;
 
   @ApiProperty({ enum: UserRole, example: UserRole.CUSTOMER })
   @IsEnum(UserRole)
-  userType: UserRole;
+  userType!: UserRole;
 
   @ApiProperty({ required: false })
   @IsOptional()

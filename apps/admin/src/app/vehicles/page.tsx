@@ -7,7 +7,13 @@ import AdminLayout from '@/components/layout/AdminLayout';
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
-import Table, { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import Table, {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/Table';
 import Select from '@/components/ui/Select';
 import Input from '@/components/ui/Input';
 import VehicleForm, { VehicleFormData } from '@/components/vehicles/VehicleForm';

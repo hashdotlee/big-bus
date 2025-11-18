@@ -1,3 +1,6 @@
+import { VehicleType, VehicleStatus } from '@big-bus/types';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNumber,
@@ -9,9 +12,6 @@ import {
   Max,
   Length,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { VehicleType, VehicleStatus } from '@big-bus/types';
 
 export class CreateVehicleDto {
   @ApiProperty({ example: '51A-12345', description: 'Vehicle plate number' })

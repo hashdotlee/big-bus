@@ -20,6 +20,19 @@ module.exports = {
     node: true,
     jest: true,
   },
+  settings: {
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+        project: [
+          'tsconfig.json',
+          'apps/*/tsconfig.json',
+          'services/*/tsconfig.json',
+          'packages/*/tsconfig.json',
+        ],
+      },
+    },
+  },
   ignorePatterns: ['.eslintrc.js', 'dist', 'node_modules', 'build', '.next'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',

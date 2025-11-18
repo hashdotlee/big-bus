@@ -78,7 +78,7 @@ export class EntityHelper {
   /**
    * Convert entity to plain object
    */
-  static toPlainObject<T extends ObjectLiteral>(entity: T): Record<string, any> {
+  static toPlainObject<T extends ObjectLiteral>(entity: T): Record<string, unknown> {
     return JSON.parse(JSON.stringify(entity));
   }
 
@@ -95,7 +95,7 @@ export class EntityHelper {
   /**
    * Get entity metadata
    */
-  static getMetadata<T>(repository: Repository<T>) {
+  static getMetadata<T extends ObjectLiteral>(repository: Repository<T>) {
     return repository.metadata;
   }
 
@@ -105,7 +105,7 @@ export class EntityHelper {
   static getPrimaryKey<T extends ObjectLiteral>(
     entity: T,
     repository: Repository<T>
-  ): any {
+  ): unknown {
     const metadata = repository.metadata;
     const primaryColumn = metadata.primaryColumns[0];
     return entity[primaryColumn.propertyName as keyof T];
@@ -136,7 +136,7 @@ export class EntityHelper {
     const id = entity[primaryColumn.propertyName as keyof T];
 
     const refreshed = await repository.findOne({
-      where: { [primaryColumn.propertyName]: id } as any,
+      where: { [primaryColumn.propertyName]: id } as unknown as import('typeorm').FindOptionsWhere<T>,
     });
 
     if (!refreshed) {

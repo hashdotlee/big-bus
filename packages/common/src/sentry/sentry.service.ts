@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/node';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class SentryService {
       dsn,
       environment,
       integrations: [
-        new ProfilingIntegration(),
+        nodeProfilingIntegration(),
       ],
       // Performance Monitoring
       tracesSampleRate: environment === 'production' ? 0.1 : 1.0,

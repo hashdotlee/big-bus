@@ -1,3 +1,4 @@
+import { VehicleType, VehicleStatus } from '@big-bus/types';
 import {
   Entity,
   Column,
@@ -6,7 +7,6 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { VehicleType, VehicleStatus } from '@big-bus/types';
 
 @Entity('vehicles')
 export class Vehicle {
