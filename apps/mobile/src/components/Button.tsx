@@ -12,10 +12,11 @@ import { colors, spacing, borderRadius, typography } from '@utils/theme';
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'text';
-  size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
+  testID?: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'text';
+  size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
@@ -28,12 +29,17 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   disabled = false,
   loading = false,
-  fullWidth = false,
+  fullWidth = false, 
+  testID,
   style,
   textStyle,
 }) => {
   const buttonStyle = [
     styles.button,
+    variant === 'primary' && styles.primaryButton,
+    variant === 'secondary' && styles.secondaryButton,
+    variant === 'outline' && styles.outlineButton,
+    disabled && styles.disabledButton,
     styles[variant],
     styles[`size_${size}`],
     fullWidth && styles.fullWidth,
@@ -43,6 +49,10 @@ export const Button: React.FC<ButtonProps> = ({
 
   const textStyleCombined = [
     styles.text,
+    variant === 'primary' && styles.primaryText,
+    variant === 'secondary' && styles.secondaryText,
+    variant === 'outline' && styles.outlineText,
+    disabled && styles.disabledText,
     styles[`text_${variant}`],
     styles[`textSize_${size}`],
     textStyle,
@@ -53,6 +63,14 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       onPress={onPress}
       disabled={disabled || loading}
+      testID={testID}
+      accessibilityLabel={title}
+      accessibilityRole="button"
+      accessibilityState={{disabled: disabled || loading}}>
+      {loading ? (
+        <ActivityIndicator
+          color={variant === 'outline' ? '#007AFF' : '#fff'}
+          testID={`${testID}-loading`}
       activeOpacity={0.7}>
       {loading ? (
         <ActivityIndicator
@@ -67,6 +85,47 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 50,
+  },
+  primaryButton: {
+    backgroundColor: '#007AFF',
+  },
+  secondaryButton: {
+    backgroundColor: '#6c757d',
+  },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+    borderColor: '#ccc',
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  primaryText: {
+    color: '#fff',
+  },
+  secondaryText: {
+    color: '#fff',
+  },
+  outlineText: {
+    color: '#007AFF',
+  },
+  disabledText: {
+    color: '#999',
+  },
+});
+
+export default Button;
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: borderRadius.md,
