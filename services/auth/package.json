@@ -93,6 +93,12 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@big-bus/common$": "<rootDir>/../../../packages/common/src",
+      "^@big-bus/types$": "<rootDir>/../../../packages/types/src",
+      "^@big-bus/config$": "<rootDir>/../../../packages/config/src",
+      "^@big-bus/database$": "<rootDir>/../../../packages/database/src"
+    }
   }
 }
