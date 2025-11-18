@@ -15,22 +15,22 @@ import { Role } from './role.entity';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
   @Index()
-  email: string;
+  email!: string;
 
   @Column({ unique: true })
   @Index()
-  phone: string;
+  phone!: string;
 
   @Column()
   @Exclude()
-  password: string;
+  password!: string;
 
   @Column({ name: 'full_name' })
-  fullName: string;
+  fullName!: string;
 
   @Column({ nullable: true })
   avatar?: string;
@@ -40,23 +40,23 @@ export class User {
     enum: UserRole,
     default: UserRole.CUSTOMER,
   })
-  userType: UserRole;
+  userType!: UserRole;
 
   @Column({
     type: 'enum',
     enum: UserStatus,
     default: UserStatus.PENDING_VERIFICATION,
   })
-  status: UserStatus;
+  status!: UserStatus;
 
   @Column({ name: 'email_verified', default: false })
-  emailVerified: boolean;
+  emailVerified!: boolean;
 
   @Column({ name: 'phone_verified', default: false })
-  phoneVerified: boolean;
+  phoneVerified!: boolean;
 
   @Column({ name: 'two_factor_enabled', default: false })
-  twoFactorEnabled: boolean;
+  twoFactorEnabled!: boolean;
 
   @Column({ name: 'two_factor_secret', nullable: true })
   @Exclude()
@@ -91,11 +91,11 @@ export class User {
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
   })
-  roles: Role[];
+  roles!: Role[];
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 }
