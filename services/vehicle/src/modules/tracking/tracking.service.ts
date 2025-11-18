@@ -1,76 +1,70 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Vehicle } from '../../database/entities';
+import { Vehicle } from '../../database/entities/vehicle.entity';
+import { UpdateLocationDto } from './dto';
 
-interface VehicleLocation {
+export interface VehicleLocation {
   vehicleId: string;
   latitude: number;
   longitude: number;
-  speed: number;
-  heading: number;
-  timestamp: Date;
+  speed?: number;
+  heading?: number;
   scheduleId?: string;
-}
-
-interface RouteTracking {
-  vehicleId: string;
-  scheduleId: string;
-  currentLocation: {
-    latitude: number;
-    longitude: number;
-  };
-  route: {
-    origin: string;
-    destination: string;
-    estimatedArrival: Date;
-  };
-  progress: number; // percentage
-  nextStop?: string;
+  timestamp: Date;
+  licensePlate?: string;
+  vehicleType?: string;
 }
 
 @Injectable()
 export class TrackingService {
-  // In-memory store for real-time locations
-  // In production, this should use Redis or a similar cache
+  private readonly logger = new Logger(TrackingService.name);
   private vehicleLocations: Map<string, VehicleLocation> = new Map();
 
   constructor(
     @InjectRepository(Vehicle)
-    private vehiclesRepository: Repository<Vehicle>,
+    private readonly vehicleRepository: Repository<Vehicle>,
   ) {}
 
   /**
-   * Update vehicle location (typically called by GPS devices)
+   * Update vehicle location in real-time
    */
-  async updateLocation(
-    vehicleId: string,
-    latitude: number,
-    longitude: number,
-    speed: number,
-    heading: number,
-    scheduleId?: string,
-  ): Promise<VehicleLocation> {
+  async updateLocation(dto: UpdateLocationDto): Promise<VehicleLocation> {
+    this.logger.debug(`Updating location for vehicle ${dto.vehicleId}`);
+
     // Verify vehicle exists
-    const vehicle = await this.vehiclesRepository.findOne({
-      where: { id: vehicleId },
+    const vehicle = await this.vehicleRepository.findOne({
+      where: { id: dto.vehicleId },
     });
 
     if (!vehicle) {
-      throw new NotFoundException(`Vehicle with ID ${vehicleId} not found`);
+      throw new NotFoundException(`Vehicle ${dto.vehicleId} not found`);
     }
 
+    // Update in-memory location
     const location: VehicleLocation = {
-      vehicleId,
-      latitude,
-      longitude,
-      speed,
-      heading,
+      vehicleId: dto.vehicleId,
+      latitude: dto.latitude,
+      longitude: dto.longitude,
+      speed: dto.speed,
+      heading: dto.heading,
+      scheduleId: dto.scheduleId,
       timestamp: new Date(),
-      scheduleId,
+      licensePlate: vehicle.licensePlate,
+      vehicleType: vehicle.type,
     };
 
-    this.vehicleLocations.set(vehicleId, location);
+    this.vehicleLocations.set(dto.vehicleId, location);
+
+    // Update database (asynchronously, don't wait)
+    this.updateDatabaseLocation(dto.vehicleId, dto.latitude, dto.longitude).catch(
+      (error) => {
+        this.logger.error(
+          `Failed to update database location for ${dto.vehicleId}`,
+          error,
+        );
+      },
+    );
 
     return location;
   }
@@ -78,82 +72,89 @@ export class TrackingService {
   /**
    * Get current location of a vehicle
    */
-  async getVehicleLocation(vehicleId: string): Promise<VehicleLocation> {
-    const location = this.vehicleLocations.get(vehicleId);
-
-    if (!location) {
-      throw new NotFoundException(
-        `No location data found for vehicle ${vehicleId}`,
-      );
+  async getVehicleLocation(vehicleId: string): Promise<VehicleLocation | null> {
+    // Try to get from in-memory cache first
+    const cachedLocation = this.vehicleLocations.get(vehicleId);
+    if (cachedLocation) {
+      return cachedLocation;
     }
+
+    // If not in cache, get from database
+    const vehicle = await this.vehicleRepository.findOne({
+      where: { id: vehicleId },
+    });
+
+    if (!vehicle || !vehicle.currentLatitude || !vehicle.currentLongitude) {
+      return null;
+    }
+
+    const location: VehicleLocation = {
+      vehicleId: vehicle.id,
+      latitude: vehicle.currentLatitude,
+      longitude: vehicle.currentLongitude,
+      timestamp: vehicle.lastLocationUpdate || new Date(),
+      licensePlate: vehicle.licensePlate,
+      vehicleType: vehicle.type,
+    };
 
     return location;
   }
 
   /**
-   * Get route tracking information for a vehicle on a specific schedule
+   * Get all active vehicles with their locations
    */
-  async getRouteTracking(
+  async getAllActiveVehicleLocations(): Promise<VehicleLocation[]> {
+    // Return all cached locations
+    return Array.from(this.vehicleLocations.values());
+  }
+
+  /**
+   * Get locations for specific schedule (trip)
+   */
+  async getScheduleVehicleLocations(scheduleId: string): Promise<VehicleLocation[]> {
+    const locations = Array.from(this.vehicleLocations.values());
+    return locations.filter((loc) => loc.scheduleId === scheduleId);
+  }
+
+  /**
+   * Remove vehicle from tracking
+   */
+  async stopTracking(vehicleId: string): Promise<void> {
+    this.vehicleLocations.delete(vehicleId);
+    this.logger.debug(`Stopped tracking vehicle ${vehicleId}`);
+  }
+
+  /**
+   * Update vehicle location in database (async)
+   */
+  private async updateDatabaseLocation(
     vehicleId: string,
-    scheduleId: string,
-  ): Promise<RouteTracking> {
-    const location = this.vehicleLocations.get(vehicleId);
-
-    if (!location) {
-      throw new NotFoundException(
-        `No location data found for vehicle ${vehicleId}`,
-      );
-    }
-
-    // TODO: In production, fetch actual schedule and route data
-    // For now, return mock data
-    const tracking: RouteTracking = {
-      vehicleId,
-      scheduleId,
-      currentLocation: {
-        latitude: location.latitude,
-        longitude: location.longitude,
-      },
-      route: {
-        origin: 'Origin Station',
-        destination: 'Destination Station',
-        estimatedArrival: new Date(Date.now() + 3600000), // 1 hour from now
-      },
-      progress: 45, // Mock progress
-      nextStop: 'Next Stop Station',
-    };
-
-    return tracking;
-  }
-
-  /**
-   * Get all active vehicle locations
-   */
-  async getAllActiveLocations(): Promise<VehicleLocation[]> {
-    // Filter locations updated in the last 5 minutes
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-    const activeLocations: VehicleLocation[] = [];
-
-    this.vehicleLocations.forEach((location) => {
-      if (location.timestamp >= fiveMinutesAgo) {
-        activeLocations.push(location);
-      }
+    latitude: number,
+    longitude: number,
+  ): Promise<void> {
+    await this.vehicleRepository.update(vehicleId, {
+      currentLatitude: latitude,
+      currentLongitude: longitude,
+      lastLocationUpdate: new Date(),
     });
-
-    return activeLocations;
   }
 
   /**
-   * Clear old location data
+   * Clean up old location data (older than 1 hour)
    */
   cleanupOldLocations(): void {
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    let cleanedCount = 0;
 
-    this.vehicleLocations.forEach((location, vehicleId) => {
-      if (location.timestamp < thirtyMinutesAgo) {
+    for (const [vehicleId, location] of this.vehicleLocations.entries()) {
+      if (location.timestamp < oneHourAgo) {
         this.vehicleLocations.delete(vehicleId);
+        cleanedCount++;
       }
-    });
+    }
+
+    if (cleanedCount > 0) {
+      this.logger.log(`Cleaned up ${cleanedCount} old vehicle locations`);
+    }
   }
 }
