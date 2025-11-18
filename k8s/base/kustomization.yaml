@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: big-bus
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - auth-service.yaml
+  - booking-service.yaml
+  - ingress.yaml
+  - redis.yaml
+  - postgres.yaml
+
+commonLabels:
+  app.kubernetes.io/name: big-bus
+  app.kubernetes.io/managed-by: kustomize

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: big-bus
+  labels:
+    name: big-bus
+    environment: production
