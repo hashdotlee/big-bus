@@ -5,6 +5,11 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { Affiliate } from './database/entities/affiliate.entity';
 import { Commission } from './database/entities/commission.entity';
+import { Payout } from './database/entities/payout.entity';
+import { ReferralClick } from './database/entities/referral-click.entity';
+import { AffiliatesModule } from './modules/affiliates/affiliates.module';
+import { CommissionsModule } from './modules/commissions/commissions.module';
+import { PayoutsModule } from './modules/payouts/payouts.module';
 
 @Module({
   imports: [
@@ -27,13 +32,15 @@ import { Commission } from './database/entities/commission.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'postgres'),
         database: configService.get('DB_DATABASE', 'affiliate_db'),
-        entities: [Affiliate, Commission],
+        entities: [Affiliate, Commission, Payout, ReferralClick],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Affiliate, Commission]),
+    AffiliatesModule,
+    CommissionsModule,
+    PayoutsModule,
   ],
   providers: [
     {
