@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: big_bus
-      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db,affiliate_db,marketplace_db
+      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db,affiliate_db,marketplace_db,ai_support_db
     ports:
       - '5432:5432'
     volumes:
@@ -291,6 +291,36 @@ services:
       - bigbus-network
     command: pnpm run dev
 
+  # AI Support Service
+  ai-support-service:
+    build:
+      context: .
+      dockerfile: services/ai-support/Dockerfile
+      target: development
+    container_name: bigbus-ai-support
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3009
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: ai_support_db
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: gpt-4-turbo-preview
+    ports:
+      - '3009:3009'
+    volumes:
+      - ./services/ai-support:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bigbus-network
+    command: pnpm run dev
+
   # API Gateway (Nginx)
   nginx:
     image: nginx:alpine
@@ -311,6 +341,7 @@ services:
       - analytics-service
       - affiliate-service
       - marketplace-service
+      - ai-support-service
     networks:
       - bigbus-network
 
