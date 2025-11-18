@@ -5,6 +5,11 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { Product } from './database/entities/product.entity';
 import { Order } from './database/entities/order.entity';
+import { Cart } from './database/entities/cart.entity';
+import { InventoryLog } from './database/entities/inventory.entity';
+import { ProductsModule } from './modules/products/products.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -27,13 +32,15 @@ import { Order } from './database/entities/order.entity';
         username: configService.get('DB_USERNAME', 'postgres'),
         password: configService.get('DB_PASSWORD', 'postgres'),
         database: configService.get('DB_DATABASE', 'marketplace_db'),
-        entities: [Product, Order],
+        entities: [Product, Order, Cart, InventoryLog],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([Product, Order]),
+    ProductsModule,
+    OrdersModule,
+    CartModule,
   ],
   providers: [
     {
