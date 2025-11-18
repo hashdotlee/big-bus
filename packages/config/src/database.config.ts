@@ -60,16 +60,9 @@ export class DatabaseConfig {
         max: maxConnections,
         min: minConnections,
       },
+      ...(entitiesPath && { entities: [entitiesPath] }),
+      ...(migrationsPath && { migrations: [migrationsPath], migrationsRun: false }),
     };
-
-    if (entitiesPath) {
-      config.entities = [entitiesPath];
-    }
-
-    if (migrationsPath) {
-      config.migrations = [migrationsPath];
-      config.migrationsRun = false;
-    }
 
     return config;
   }
