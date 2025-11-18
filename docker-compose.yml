@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: big_bus
-      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db
+      POSTGRES_MULTIPLE_DATABASES: auth_db,booking_db,vehicle_db,payment_db,analytics_db,affiliate_db,marketplace_db
     ports:
       - '5432:5432'
     volumes:
@@ -235,6 +235,62 @@ services:
       - bigbus-network
     command: pnpm run start:dev
 
+  # Affiliate Service
+  affiliate-service:
+    build:
+      context: .
+      dockerfile: services/affiliate/Dockerfile
+      target: development
+    container_name: bigbus-affiliate
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3007
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: affiliate_db
+    ports:
+      - '3007:3007'
+    volumes:
+      - ./services/affiliate:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bigbus-network
+    command: pnpm run dev
+
+  # Marketplace Service
+  marketplace-service:
+    build:
+      context: .
+      dockerfile: services/marketplace/Dockerfile
+      target: development
+    container_name: bigbus-marketplace
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3008
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: marketplace_db
+    ports:
+      - '3008:3008'
+    volumes:
+      - ./services/marketplace:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bigbus-network
+    command: pnpm run dev
+
   # API Gateway (Nginx)
   nginx:
     image: nginx:alpine
@@ -253,6 +309,8 @@ services:
       - payment-service
       - notification-service
       - analytics-service
+      - affiliate-service
+      - marketplace-service
     networks:
       - bigbus-network
 
