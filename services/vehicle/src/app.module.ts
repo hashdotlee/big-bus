@@ -6,6 +6,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { databaseConfig } from './config/database.config';
 import { HealthModule } from './health/health.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';
+import { TrackingModule } from './modules/tracking/tracking.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { VehiclesModule } from './modules/vehicles/vehicles.module';
     TypeOrmModule.forRoot(databaseConfig()),
     HealthModule,
     VehiclesModule,
+    TrackingModule,
   ],
   controllers: [],
   providers: [
