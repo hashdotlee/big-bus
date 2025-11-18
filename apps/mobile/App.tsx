@@ -1,28 +1,36 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import RootNavigator from '@navigation/RootNavigator';
+import { StatusBar } from 'react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
+import { AppNavigator } from './src/navigation';
+import { colors } from './src/utils/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 2,
+      retry: 3,
+      retryDelay: 1000,
       staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
-const App: React.FC = () => {
+function App(): React.JSX.Element {
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor={colors.background.paper}
+          />
+          <AppNavigator />
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
-};
+}
 
 export default App;

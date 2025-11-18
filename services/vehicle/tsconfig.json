@@ -17,6 +17,14 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "paths": {
+      "@big-bus/common": ["../../packages/common/src"],
+      "@big-bus/types": ["../../packages/types/src"],
+      "@big-bus/config": ["../../packages/config/src"],
+      "@big-bus/database": ["../../packages/database/src"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

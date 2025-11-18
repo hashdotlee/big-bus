@@ -130,7 +130,7 @@ export class UsersService {
   async verifyEmail(id: string): Promise<User> {
     const user = await this.findById(id);
     user.emailVerified = true;
-    user.emailVerificationToken = null;
+    user.emailVerificationToken = undefined;
     return this.userRepository.save(user);
   }
 
@@ -140,7 +140,7 @@ export class UsersService {
   async verifyPhone(id: string): Promise<User> {
     const user = await this.findById(id);
     user.phoneVerified = true;
-    user.phoneVerificationToken = null;
+    user.phoneVerificationToken = undefined;
     return this.userRepository.save(user);
   }
 
@@ -148,7 +148,7 @@ export class UsersService {
    * Update user's refresh token
    */
   async updateRefreshToken(id: string, refreshToken: string | null): Promise<void> {
-    await this.userRepository.update(id, { refreshToken });
+    await this.userRepository.update(id, { refreshToken: refreshToken ?? undefined });
   }
 
   /**

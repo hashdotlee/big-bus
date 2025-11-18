@@ -41,6 +41,7 @@
     "@nestjs/typeorm": "^10.0.1",
     "@sentry/node": "^10.25.0",
     "@sentry/profiling-node": "^10.25.0",
+    "axios": "^1.6.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
@@ -49,6 +50,8 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "otplib": "^12.0.1",
+    "qrcode": "^1.5.3",
     "pg": "^8.11.3",
     "redis": "^4.6.12",
     "reflect-metadata": "^0.2.1",
@@ -67,6 +70,7 @@
     "@types/node": "^20.10.5",
     "@types/passport-jwt": "^4.0.0",
     "@types/passport-local": "^1.0.38",
+    "@types/qrcode": "^1.5.5",
     "@types/supertest": "^6.0.2",
     "jest": "^29.7.0",
     "prettier": "^3.1.1",
@@ -93,6 +97,12 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@big-bus/common$": "<rootDir>/../../../packages/common/src",
+      "^@big-bus/types$": "<rootDir>/../../../packages/types/src",
+      "^@big-bus/config$": "<rootDir>/../../../packages/config/src",
+      "^@big-bus/database$": "<rootDir>/../../../packages/database/src"
+    }
   }
 }

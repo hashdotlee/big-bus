@@ -54,10 +54,7 @@ export default function BookingsPage() {
           ) : myBookings && myBookings.length > 0 ? (
             <div className="grid gap-4">
               {myBookings.map((booking: any) => (
-                <div
-                  key={booking.id}
-                  className="bg-white rounded-lg shadow-md p-6"
-                >
+                <div key={booking.id} className="bg-white rounded-lg shadow-md p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-xl font-semibold mb-2">
@@ -65,32 +62,26 @@ export default function BookingsPage() {
                       </h3>
                       <span
                         className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                          booking.status
+                          booking.status,
                         )}`}
                       >
                         {booking.status}
                       </span>
                     </div>
-                    <p className="text-2xl font-bold text-primary-600">
-                      ${booking.totalPrice}
-                    </p>
+                    <p className="text-2xl font-bold text-primary-600">${booking.totalPrice}</p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
                       <p className="text-sm text-gray-500">Route</p>
                       <p className="font-medium">
-                        {booking.pickupStation.city} →{' '}
-                        {booking.dropoffStation.city}
+                        {booking.pickupStation.city} → {booking.dropoffStation.city}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Date & Time</p>
                       <p className="font-medium">
-                        {format(
-                          new Date(booking.schedule.departureTime),
-                          'PPP HH:mm'
-                        )}
+                        {format(new Date(booking.schedule.departureTime), 'PPP HH:mm')}
                       </p>
                     </div>
                     <div>
@@ -100,8 +91,7 @@ export default function BookingsPage() {
                     <div>
                       <p className="text-sm text-gray-500">Passenger</p>
                       <p className="font-medium">
-                        {booking.passengerInfo.firstName}{' '}
-                        {booking.passengerInfo.lastName}
+                        {booking.passengerInfo.firstName} {booking.passengerInfo.lastName}
                       </p>
                     </div>
                   </div>
@@ -110,9 +100,7 @@ export default function BookingsPage() {
                     {booking.status === 'confirmed' && (
                       <>
                         <button
-                          onClick={() =>
-                            router.push(`/bookings/${booking.id}/ticket`)
-                          }
+                          onClick={() => router.push(`/bookings/${booking.id}/ticket`)}
                           className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-lg transition"
                         >
                           View Ticket
@@ -127,9 +115,7 @@ export default function BookingsPage() {
                     )}
                     {booking.status === 'pending' && (
                       <button
-                        onClick={() =>
-                          router.push(`/payment/${booking.id}`)
-                        }
+                        onClick={() => router.push(`/payment/${booking.id}`)}
                         className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-lg transition"
                       >
                         Complete Payment
@@ -141,9 +127,7 @@ export default function BookingsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-lg">
-              <p className="text-gray-600 text-lg mb-4">
-                You don't have any bookings yet.
-              </p>
+              <p className="text-gray-600 text-lg mb-4">You don't have any bookings yet.</p>
               <button
                 onClick={() => router.push('/')}
                 className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-6 rounded-lg transition"

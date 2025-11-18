@@ -1,3 +1,4 @@
+import { VehicleType, VehicleStatus } from '@big-bus/types';
 import {
   Injectable,
   NotFoundException,
@@ -6,8 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { Vehicle } from '../../database/entities';
-import { VehicleType, VehicleStatus } from '@big-bus/types';
+
 import { CreateVehicleDto, UpdateVehicleDto, RecordMaintenanceDto } from './dto';
 
 @Injectable()
@@ -50,7 +52,7 @@ export class VehiclesService {
     type?: VehicleType,
     status?: VehicleStatus,
   ): Promise<Vehicle[]> {
-    const whereConditions: any = {};
+    const whereConditions: Partial<Vehicle> = {};
 
     if (isActive !== undefined) {
       whereConditions.isActive = isActive;
@@ -65,7 +67,7 @@ export class VehiclesService {
     }
 
     return await this.vehiclesRepository.find({
-      where: Object.keys(whereConditions).length > 0 ? whereConditions : undefined,
+      where: Object.keys(whereConditions).length > 0 ? whereConditions : {},
       order: { plateNumber: 'ASC' },
     });
   }

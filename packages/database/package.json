@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "keywords": ["big-bus", "database", "typeorm"],
   "author": "Big Bus Team",

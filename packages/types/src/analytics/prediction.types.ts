@@ -17,12 +17,12 @@ export interface Prediction {
   predictionType: PredictionType;
   targetDate: Date;
   predictionDate: Date;
-  data: any;
+  data: Record<string, unknown>;
   confidence?: number;
-  parameters?: any;
+  parameters?: Record<string, unknown>;
   modelVersion?: string;
   status: PredictionStatus;
-  actualValue?: any;
+  actualValue?: number | Record<string, unknown>;
   accuracyScore?: number;
   errorMessage?: string;
   createdAt: Date;
@@ -32,7 +32,7 @@ export interface Prediction {
 export interface CreatePredictionRequest {
   predictionType: PredictionType;
   targetDate: string;
-  parameters?: any;
+  parameters?: Record<string, unknown>;
 }
 
 export interface QueryPredictionsRequest {
@@ -61,7 +61,14 @@ export interface OccupancyPrediction {
   message?: string;
 }
 
+export interface VehicleMaintenanceInfo {
+  vehicleId: string;
+  maintenanceType: string;
+  estimatedDate: Date;
+  priority?: string;
+}
+
 export interface MaintenancePrediction {
-  vehiclesNeedingMaintenance: any[];
+  vehiclesNeedingMaintenance: VehicleMaintenanceInfo[];
   message?: string;
 }

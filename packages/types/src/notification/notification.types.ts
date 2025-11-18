@@ -42,7 +42,7 @@ export interface INotification {
   subject?: string;
   message: string;
   templateId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   scheduledAt?: Date;
   sentAt?: Date;
   deliveredAt?: Date;
@@ -60,8 +60,8 @@ export interface SendNotificationDto {
   subject?: string;
   message?: string;
   templateId?: string;
-  templateData?: Record<string, any>;
-  metadata?: Record<string, any>;
+  templateData?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   scheduledAt?: Date;
 }
 
@@ -73,8 +73,8 @@ export interface SendBulkNotificationDto {
   subject?: string;
   message?: string;
   templateId?: string;
-  templateData?: Record<string, any>;
-  metadata?: Record<string, any>;
+  templateData?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   scheduledAt?: Date;
 }
 

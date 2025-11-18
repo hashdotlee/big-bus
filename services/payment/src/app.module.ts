@@ -9,6 +9,8 @@ import { WalletsModule } from './modules/wallets/wallets.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { PaymentGatewaysModule } from './modules/payment-gateways/payment-gateways.module';
 import { RefundsModule } from './modules/refunds/refunds.module';
+import { PaymentExtensionsModule } from './extensions/payment-extensions.module';
+import { PaymentExtensionInitializer } from './extensions/payment-extension.initializer';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { RefundsModule } from './modules/refunds/refunds.module';
       useFactory: getDatabaseConfig,
       inject: [ConfigService],
     }),
+    // Extension system
+    PaymentExtensionsModule,
     HealthModule,
     WalletsModule,
     TransactionsModule,
@@ -39,6 +43,7 @@ import { RefundsModule } from './modules/refunds/refunds.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    PaymentExtensionInitializer,
   ],
 })
 export class AppModule {}
