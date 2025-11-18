@@ -61,7 +61,10 @@ export class DatabaseConfig {
         min: minConnections,
       },
       ...(entitiesPath && { entities: [entitiesPath] }),
-      ...(migrationsPath && { migrations: [migrationsPath], migrationsRun: false }),
+      ...(migrationsPath && {
+        migrations: [migrationsPath],
+        migrationsRun: false,
+      }),
     };
 
     return config;

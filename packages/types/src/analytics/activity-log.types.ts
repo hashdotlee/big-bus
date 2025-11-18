@@ -5,7 +5,7 @@ export interface ActivityLog {
   action: string;
   entityType?: string;
   entityId?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   status?: string;
@@ -19,7 +19,7 @@ export interface CreateActivityLogRequest {
   action: string;
   entityType?: string;
   entityId?: string;
-  metadata?: any;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   status?: string;

@@ -4,17 +4,17 @@ metadata:
   name: big-bus-config
   namespace: big-bus
 data:
-  NODE_ENV: "production"
-  LOG_LEVEL: "info"
+  NODE_ENV: 'production'
+  LOG_LEVEL: 'info'
   # Service URLs
-  AUTH_SERVICE_URL: "http://auth-service:3001"
-  BOOKING_SERVICE_URL: "http://booking-service:3002"
-  VEHICLE_SERVICE_URL: "http://vehicle-service:3003"
-  PAYMENT_SERVICE_URL: "http://payment-service:3004"
-  NOTIFICATION_SERVICE_URL: "http://notification-service:3005"
-  ANALYTICS_SERVICE_URL: "http://analytics-service:3006"
+  AUTH_SERVICE_URL: 'http://auth-service:3001'
+  BOOKING_SERVICE_URL: 'http://booking-service:3002'
+  VEHICLE_SERVICE_URL: 'http://vehicle-service:3003'
+  PAYMENT_SERVICE_URL: 'http://payment-service:3004'
+  NOTIFICATION_SERVICE_URL: 'http://notification-service:3005'
+  ANALYTICS_SERVICE_URL: 'http://analytics-service:3006'
   # Infrastructure URLs
-  REDIS_HOST: "redis-service"
-  REDIS_PORT: "6379"
-  RABBITMQ_HOST: "rabbitmq-service"
-  RABBITMQ_PORT: "5672"
+  REDIS_HOST: 'redis-service'
+  REDIS_PORT: '6379'
+  RABBITMQ_HOST: 'rabbitmq-service'
+  RABBITMQ_PORT: '5672'

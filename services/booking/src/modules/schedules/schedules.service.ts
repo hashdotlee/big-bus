@@ -147,4 +147,49 @@ export class SchedulesService {
     schedule.status = ScheduleStatus.COMPLETED;
     return await this.schedulesRepository.save(schedule);
   }
+
+  async getAvailableSeats(id: string): Promise<{
+    totalSeats: number;
+    availableSeats: number;
+    bookedSeats: string[];
+    availableSeatNumbers: string[];
+  }> {
+    const schedule = await this.schedulesRepository.findOne({
+      where: { id },
+      relations: ['bookings'],
+    });
+
+    if (!schedule) {
+      throw new NotFoundException(`Schedule with ID ${id} not found`);
+    }
+
+    // Collect all booked seat numbers from confirmed bookings
+    const bookedSeats: string[] = [];
+    if (schedule.bookings) {
+      schedule.bookings.forEach((booking: any) => {
+        // Only count seats from confirmed or pending bookings
+        if (booking.status === 'confirmed' || booking.status === 'pending') {
+          bookedSeats.push(...booking.seatNumbers);
+        }
+      });
+    }
+
+    // Generate all possible seat numbers (1 to totalSeats)
+    const allSeats: string[] = [];
+    for (let i = 1; i <= schedule.totalSeats; i++) {
+      allSeats.push(i.toString());
+    }
+
+    // Calculate available seat numbers
+    const availableSeatNumbers = allSeats.filter(
+      (seat) => !bookedSeats.includes(seat),
+    );
+
+    return {
+      totalSeats: schedule.totalSeats,
+      availableSeats: availableSeatNumbers.length,
+      bookedSeats,
+      availableSeatNumbers,
+    };
+  }
 }
