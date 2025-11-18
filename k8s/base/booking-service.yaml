@@ -23,52 +23,52 @@ spec:
         tier: backend
     spec:
       containers:
-      - name: booking-service
-        image: your-registry/big-bus-booking:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3002
-          name: http
-        env:
-        - name: PORT
-          value: "3002"
-        - name: SERVICE_NAME
-          value: "booking-service"
-        envFrom:
-        - configMapRef:
-            name: big-bus-config
-        - secretRef:
-            name: big-bus-secrets
-        resources:
-          requests:
-            memory: "384Mi"
-            cpu: "300m"
-          limits:
-            memory: "768Mi"
-            cpu: "600m"
-        livenessProbe:
-          httpGet:
-            path: /api/health/live
-            port: 3002
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /api/health/ready
-            port: 3002
-          initialDelaySeconds: 15
-          periodSeconds: 5
-          timeoutSeconds: 3
-          failureThreshold: 3
-        startupProbe:
-          httpGet:
-            path: /api/health/live
-            port: 3002
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 30
+        - name: booking-service
+          image: your-registry/big-bus-booking:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3002
+              name: http
+          env:
+            - name: PORT
+              value: '3002'
+            - name: SERVICE_NAME
+              value: 'booking-service'
+          envFrom:
+            - configMapRef:
+                name: big-bus-config
+            - secretRef:
+                name: big-bus-secrets
+          resources:
+            requests:
+              memory: '384Mi'
+              cpu: '300m'
+            limits:
+              memory: '768Mi'
+              cpu: '600m'
+          livenessProbe:
+            httpGet:
+              path: /api/health/live
+              port: 3002
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health/ready
+              port: 3002
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /api/health/live
+              port: 3002
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
 ---
 apiVersion: v1
 kind: Service
@@ -80,10 +80,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 3002
-    targetPort: 3002
-    protocol: TCP
-    name: http
+    - port: 3002
+      targetPort: 3002
+      protocol: TCP
+      name: http
   selector:
     app: booking-service
 ---
@@ -100,15 +100,15 @@ spec:
   minReplicas: 3
   maxReplicas: 15
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
