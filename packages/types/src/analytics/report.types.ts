@@ -30,8 +30,8 @@ export interface Report {
   endDate: Date;
   status: ReportStatus;
   format: ReportFormat;
-  data?: any;
-  parameters?: any;
+  data?: Record<string, unknown>;
+  parameters?: Record<string, unknown>;
   filePath?: string;
   fileSize?: number;
   generatedBy?: string;

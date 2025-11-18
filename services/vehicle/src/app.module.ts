@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { databaseConfig } from './config/database.config';
 import { HealthModule } from './health/health.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';

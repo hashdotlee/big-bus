@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -45,8 +46,10 @@ async function bootstrap() {
   const port = process.env.PORT || 3003;
   await app.listen(port);
 
+  // eslint-disable-next-line no-console
   console.log(`🚀 Vehicle Service is running on: http://localhost:${port}`);
+  // eslint-disable-next-line no-console
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 
-bootstrap();
+void bootstrap();
